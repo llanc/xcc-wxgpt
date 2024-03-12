@@ -7,10 +7,23 @@ import (
 	"strings"
 )
 
-func PrintlnQrcodeUrlNotOpen(uuid string) {
+func printlnQrcodeUrlNotOpen(uuid string) {
 	println("访问下面网址扫描二维码登录")
 	qrcodeUrl := openwechat.GetQrcodeUrl(uuid)
 	println(qrcodeUrl)
+}
+func groupMsgToBotMatch(msgContent string, botKey string) bool {
+	fmt.Println("Text: ", msgContent)
+	return strings.HasPrefix(msgContent, botKey) || strings.HasSuffix(msgContent, botKey)
+}
+func getGroupMsgToBot(msgContent string, botKey string) string {
+	gptMsg := ""
+	if strings.HasPrefix(msgContent, botKey) {
+		gptMsg, _ = strings.CutPrefix(msgContent, botKey)
+	} else if strings.HasSuffix(msgContent, botKey) {
+		gptMsg, _ = strings.CutSuffix(msgContent, botKey)
+	}
+	return gptMsg
 }
 
 func main() {
@@ -27,29 +40,27 @@ func main() {
 	dispatcher := openwechat.NewMessageMatchDispatcher()
 	dispatcher.OnText(func(ctx *openwechat.MessageContext) {
 		msg := ctx.Message
-		msgContent := msg.Content
-		fmt.Println("Text: ", msgContent)
-		if !strings.HasPrefix(msgContent, botKey) && !strings.HasSuffix(msgContent, botKey) {
+		if msg.IsSendByFriend() {
+			msg.ReplyText(chat(msg.Content))
 			return
 		}
-		gptMsg := ""
-		if strings.HasPrefix(msgContent, botKey) {
-			gptMsg, _ = strings.CutPrefix(msgContent, botKey)
-		} else if strings.HasSuffix(msgContent, botKey) {
-			gptMsg, _ = strings.CutSuffix(msgContent, botKey)
+		msgContent := msg.Content
+		if !groupMsgToBotMatch(msgContent, botKey) {
+			return
 		}
-		if len(gptMsg) == 0 {
+		groupMsgToBot := getGroupMsgToBot(msgContent, botKey)
+		if len(groupMsgToBot) == 0 {
 			msg.ReplyText("要@我并且问问题才行哦")
 			return
 		}
-		//msg.ReplyText(gptMsg)
-		msg.ReplyText(chat(gptMsg))
+		//msg.ReplyText(groupMsgToBot)
+		msg.ReplyText(chat(groupMsgToBot))
 	})
 
 	// 注册消息处理函数
 	bot.MessageHandler = dispatcher.AsMessageHandler()
 
-	bot.UUIDCallback = PrintlnQrcodeUrlNotOpen
+	bot.UUIDCallback = printlnQrcodeUrlNotOpen
 
 	reloadStorage := openwechat.NewFileHotReloadStorage("storage.json")
 	defer reloadStorage.Close()
