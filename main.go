@@ -40,6 +40,7 @@ func main() {
 		}
 		if len(gptMsg) == 0 {
 			msg.ReplyText("要@我并且问问题才行哦")
+			return
 		}
 		//msg.ReplyText(gptMsg)
 		msg.ReplyText(chat(gptMsg))

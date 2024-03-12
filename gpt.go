@@ -17,14 +17,19 @@ func chat(msg string) string {
 	if len(strings.TrimSpace(baseURL)) == 0 {
 		panic("baseURL IS BLANK")
 	}
+	model := os.Getenv("MODEL")
+	if len(strings.TrimSpace(baseURL)) == 0 {
+		println("MODEL IS BLANK SET DEFAULT GPT3.5")
+		model = "gpt-3.5-turbo"
+	}
 
-	config := openai.DefaultConfig("token")
+	config := openai.DefaultConfig(token)
 	config.BaseURL = baseURL
 	client := openai.NewClientWithConfig(config)
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: openai.GPT4,
+			Model: model,
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleUser,
@@ -36,7 +41,7 @@ func chat(msg string) string {
 
 	if err != nil {
 		fmt.Printf("ChatCompletion error: %v\n", err)
-		return "接口抽风了，再试下吧"
+		return "上游接口出问题了，稍后再试下吧^_^"
 	}
 	return resp.Choices[0].Message.Content
 }
