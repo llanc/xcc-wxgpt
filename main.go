@@ -27,6 +27,10 @@ func getGroupMsgToBot(msgContent string, botKey string) string {
 }
 
 func main() {
+
+	chat := &Chat{}
+	chat.initByEnv()
+
 	nickname := strings.TrimSpace(os.Getenv("BOT_NICKNAME"))
 	if len(nickname) == 0 {
 		panic("BOT_NICKNAME IS BLANK")
@@ -40,8 +44,8 @@ func main() {
 	dispatcher := openwechat.NewMessageMatchDispatcher()
 	dispatcher.OnText(func(ctx *openwechat.MessageContext) {
 		msg := ctx.Message
-		if msg.IsSendByFriend() {
-			msg.ReplyText(chat(msg.Content))
+		if msg.IsSendByGroup() {
+			msg.ReplyText(chat.rawChat(msg.Content))
 			return
 		}
 		msgContent := msg.Content
@@ -50,11 +54,11 @@ func main() {
 		}
 		groupMsgToBot := getGroupMsgToBot(msgContent, botKey)
 		if len(groupMsgToBot) == 0 {
-			msg.ReplyText("要@我并且问问题才行哦")
+			msg.ReplyText("我是小串串，如果需要帮助请@我并告诉我需要做什么")
 			return
 		}
 		//msg.ReplyText(groupMsgToBot)
-		msg.ReplyText(chat(groupMsgToBot))
+		msg.ReplyText(chat.rawChat(groupMsgToBot))
 	})
 
 	// 注册消息处理函数
