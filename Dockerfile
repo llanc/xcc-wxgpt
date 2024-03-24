@@ -24,8 +24,10 @@ COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/S
 ENV TZ Asia/Shanghai
 
 ENV BOT_NICKNAME ''
+ENV DATA_PATH ''
 ENV BASE_URL ''
 ENV TOKEN ''
+ENV MODEL ''
 
 WORKDIR /app
 COPY --from=builder /app/xcc /app/xcc

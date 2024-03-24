@@ -1,4 +1,4 @@
-package main
+package chat
 
 import (
 	"context"
@@ -13,15 +13,7 @@ type Chat struct {
 	client *openai.Client
 }
 
-func (chat *Chat) init(baseURL, token, model string) {
-	chat.model = model
-	config := openai.DefaultConfig(token)
-	config.BaseURL = baseURL
-	client := openai.NewClientWithConfig(config)
-	chat.client = client
-}
-
-func (chat *Chat) initByEnv() {
+func (chat *Chat) Init() {
 	baseURL := os.Getenv("BASE_URL")
 	if len(strings.TrimSpace(baseURL)) == 0 {
 		panic("baseURL IS BLANK")
@@ -33,7 +25,7 @@ func (chat *Chat) initByEnv() {
 	model := os.Getenv("MODEL")
 	if len(strings.TrimSpace(baseURL)) == 0 {
 		println("MODEL IS BLANK SET DEFAULT GPT3.5")
-		model = "gpt-3.5-turbo"
+		model = "chat-3.5-turbo"
 	}
 	chat.model = model
 	config := openai.DefaultConfig(token)
@@ -42,12 +34,7 @@ func (chat *Chat) initByEnv() {
 	chat.client = client
 }
 
-func (chat *Chat) errorHandle(err error) string {
-	fmt.Printf("ChatCompletion error: %v\n", err)
-	return "上游接口出问题了，稍后再试下吧^_^"
-}
-
-func (chat *Chat) rawChat(msg string) string {
+func (chat *Chat) RawChat(msg string) string {
 	resp, err := chat.client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
@@ -67,15 +54,15 @@ func (chat *Chat) rawChat(msg string) string {
 	return resp.Choices[0].Message.Content
 }
 
-func (chat *Chat) simpleChat(prompt ChatPrompt, msg string) string {
+func (chat *Chat) SimpleChat(prompt Prompt, msg string) string {
 	return chat.promptChat(prompt, msg, 0.7)
 }
 
-func (chat *Chat) strictChat(prompt ChatPrompt, msg string) string {
+func (chat *Chat) StrictChat(prompt Prompt, msg string) string {
 	return chat.promptChat(prompt, msg, 0.1)
 }
 
-func (chat *Chat) promptChat(prompt ChatPrompt, msg string, temperature float32) string {
+func (chat *Chat) promptChat(prompt Prompt, msg string, temperature float32) string {
 	resp, err := chat.client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
@@ -98,4 +85,9 @@ func (chat *Chat) promptChat(prompt ChatPrompt, msg string, temperature float32)
 		return chat.errorHandle(err)
 	}
 	return resp.Choices[0].Message.Content
+}
+
+func (chat *Chat) errorHandle(err error) string {
+	fmt.Printf("ChatCompletion error: %v\n", err)
+	return "上游接口出问题了，稍后再试下吧^_^"
 }
