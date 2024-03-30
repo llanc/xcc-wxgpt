@@ -1,4 +1,4 @@
-module github.com/llanc/xcc-wxgpt
+module xcc-wxgpt
 
 go 1.22.1
 

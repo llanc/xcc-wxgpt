@@ -3,11 +3,11 @@ package actor
 import (
 	"fmt"
 	"github.com/eatmoreapple/openwechat"
-	"github.com/llanc/xcc-wxgpt/chat"
 	"io"
 	"log"
 	"os"
 	"strings"
+	"xcc-wxgpt/chat"
 )
 
 type Actor struct {
