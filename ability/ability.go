@@ -1,4 +1,4 @@
-package main
+package ability
 
 import (
 	"encoding/json"
@@ -10,30 +10,18 @@ type Param struct {
 	Name        string `json:"name"`
 }
 type Ability struct {
-	ID           string               `json:"id"`
-	Name         string               `json:"name"`
-	Fn           func(args ...string) `json:"-"`
-	Description  string               `json:"desc"`
-	FormalParams []Param              `json:"params"`
+	ID           string  `json:"id"`
+	Name         string  `json:"name"`
+	Description  string  `json:"desc"`
+	FormalParams []Param `json:"params"`
 }
-type List struct {
-	Abilities []Ability `json:"abilities"`
-}
+type Abilities []Ability
 
-func (list *List) ToString() (string, error) {
-	jsonData, err := json.MarshalIndent(list, "", "\t")
+func (list *Abilities) ToString() (string, error) {
+	jsonData, err := json.Marshal(list)
 	if err != nil {
+		fmt.Printf("Error marshaling to JSON: %v\n", err)
 		return "", err
 	}
 	return string(jsonData), nil
-}
-func (ability *Ability) ToFnSign() string {
-	var params []string
-	for _, param := range ability.FormalParams {
-		params = append(params, param.Name)
-	}
-	return fmt.Sprintf("%s(%s)", ability.Name, params)
-}
-func (ability *Ability) ToFnDesc() string {
-	return fmt.Sprintf("【Function %s provides %s with parameters %v】", ability.ToFnSign(), ability.Description, ability.FormalParams)
 }

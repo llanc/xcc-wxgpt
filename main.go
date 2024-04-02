@@ -1,6 +1,6 @@
 package main
 
-import "github.com/llanc/xcc-wxgpt/actor"
+import "xcc-wxgpt/actor"
 
 func main() {
 	botActor := &actor.Actor{}
