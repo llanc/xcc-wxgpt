@@ -6,7 +6,7 @@ import (
 )
 
 func TestRegister(t *testing.T) {
-	abilityList := Register()
-	str, _ := abilityList.ToString()
+	abilityList := Register("support.go")
+	str := abilityList.ToString()
 	fmt.Println(str)
 }

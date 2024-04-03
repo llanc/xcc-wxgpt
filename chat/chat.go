@@ -55,14 +55,14 @@ func (chat *Chat) RawChat(msg string) string {
 }
 
 func (chat *Chat) SimpleChat(prompt Prompt, msg string) string {
-	return chat.promptChat(prompt, msg, 0.7)
+	return chat.PromptChat(prompt, msg, 0.7)
 }
 
 func (chat *Chat) StrictChat(prompt Prompt, msg string) string {
-	return chat.promptChat(prompt, msg, 0.1)
+	return chat.PromptChat(prompt, msg, 0.1)
 }
 
-func (chat *Chat) promptChat(prompt Prompt, msg string, temperature float32) string {
+func (chat *Chat) PromptChat(prompt Prompt, msg string, temperature float32) string {
 	resp, err := chat.client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
