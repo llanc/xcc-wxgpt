@@ -25,7 +25,7 @@ func (chat *Chat) Init() {
 	model := os.Getenv("MODEL")
 	if len(strings.TrimSpace(baseURL)) == 0 {
 		println("MODEL IS BLANK SET DEFAULT GPT3.5")
-		model = "chat-3.5-turbo"
+		model = "gpt-3.5-turbo"
 	}
 	chat.model = model
 	config := openai.DefaultConfig(token)
